@@ -73,10 +73,19 @@ class Bot extends EventEmitter {
     setupEventHandlers() {
         // QR Code event
         this.client.on('qr', (qr) => {
-            logger.info('QR Code received, scan with your phone:');
+            logger.info('='.repeat(50));
+            logger.info('NEW QR CODE GENERATED - SCAN TO CONNECT');
+            logger.info('='.repeat(50));
             this.emit('qr_received', qr);
+            
+            // Show a very tiny QR code in terminal (just for reference)
+            console.log('\nMini QR (for reference only):');
             qrcode.generate(qr, { small: true });
-            logger.info('Visit /qr in your browser for an easier-to-scan QR code');
+            
+            logger.info('='.repeat(50));
+            logger.info('For easier scanning, visit: http://localhost:5000/qr');
+            logger.info('Or copy this link and open in browser: /qr');
+            logger.info('='.repeat(50));
         });
 
         // Ready event
