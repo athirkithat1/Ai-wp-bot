@@ -524,8 +524,45 @@ class MessageHandler {
             return `I can help you with questions about:\n• Geography: capitals, countries, rivers, mountains\n• Science: physics, chemistry, biology, space\n• History: world wars, independence movements, famous people\n• Sports: cricket, football, tennis players and facts\n• Technology: inventions, computers, internet\n• General knowledge: largest, smallest, fastest records\n\nCould you be more specific about what you'd like to know?`;
         }
         
+        // Math calculations
+        if (text.includes('+') || text.includes('-') || text.includes('*') || text.includes('/') || text.includes('add') || text.includes('subtract') || text.includes('multiply') || text.includes('divide')) {
+            try {
+                // Simple arithmetic
+                const mathExpression = text.match(/(\d+)\s*[\+\-\*\/]\s*(\d+)/);
+                if (mathExpression) {
+                    const result = eval(mathExpression[0]);
+                    return `${mathExpression[0]} = ${result}`;
+                }
+                
+                // Handle word problems
+                if (text.includes('what is') && (text.includes('+') || text.includes('plus'))) {
+                    const nums = text.match(/\d+/g);
+                    if (nums && nums.length >= 2) {
+                        const sum = parseInt(nums[0]) + parseInt(nums[1]);
+                        return `${nums[0]} + ${nums[1]} = ${sum}`;
+                    }
+                }
+            } catch (e) {
+                return 'I can help with simple math calculations. Try asking "What is 3+9?" or "5*7 equals?"';
+            }
+        }
+        
+        // Trigonometry
+        if (text.includes('sin(90)') || text.includes('sine 90')) {
+            return 'sin(90°) = 1 (or sin(π/2) = 1 in radians)';
+        }
+        if (text.includes('cos(90)') || text.includes('cosine 90')) {
+            return 'cos(90°) = 0 (or cos(π/2) = 0 in radians)';
+        }
+        if (text.includes('sin(0)') || text.includes('sine 0')) {
+            return 'sin(0°) = 0';
+        }
+        if (text.includes('cos(0)') || text.includes('cosine 0')) {
+            return 'cos(0°) = 1';
+        }
+        
         // Default helpful response
-        return `Hello! I'm here to help you with questions. You can ask me about:\n• Geography (capitals, countries, states)\n• Science (physics, biology basics)\n• History and general knowledge\n• Simple calculations\n• Current time and date\n\nWhat would you like to know?`;
+        return `I can help with questions about:\n• Geography: capitals, countries, rivers, mountains\n• Science: physics, chemistry, biology, space\n• History: world wars, independence movements, famous people\n• Sports: cricket, football, tennis players and facts\n• Technology: inventions, computers, internet\n• Math: calculations, trigonometry, basic formulas\n• General knowledge: largest, smallest, fastest records\n\nWhat would you like to know?`;
     }
 
     setOwnerStatus(status) {
