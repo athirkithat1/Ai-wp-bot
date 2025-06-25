@@ -298,6 +298,32 @@ function saveSettings() {
     showNotification('Settings saved successfully', 'success');
 }
 
+async function changeAccount() {
+    if (!confirm('⚠️ This will disconnect the current WhatsApp account and require scanning a new QR code. Continue?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/change-account', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('✅ WhatsApp session cleared! Please restart the bot and scan new QR code.', 'success');
+            setTimeout(() => {
+                window.open('/qr', '_blank');
+            }, 2000);
+        } else {
+            showNotification('❌ Failed to change account: ' + result.message, 'error');
+        }
+    } catch (error) {
+        showNotification('❌ Error changing account: ' + error.message, 'error');
+    }
+}
+
 function showNotification(message, type = 'info') {
     const alertClass = {
         'success': 'alert-success',
