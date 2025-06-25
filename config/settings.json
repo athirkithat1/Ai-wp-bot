@@ -41,7 +41,9 @@
         "enableKeywordDetection": true,
         "enableSentimentAnalysis": true,
         "enableEntityExtraction": false,
-        "saveConversationHistory": false
+        "saveConversationHistory": false,
+        "enableButtons": true,
+        "enableOwnerStatus": true
     },
     "notifications": {
         "enableStartupNotification": false,

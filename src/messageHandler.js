@@ -3,6 +3,7 @@ const path = require('path');
 const logger = require('./logger');
 const NLP = require('./nlp');
 const AIHandler = require('./aiHandler');
+const ButtonHandler = require('./buttonHandler');
 
 class MessageHandler {
     constructor() {
@@ -10,6 +11,8 @@ class MessageHandler {
         this.settings = null;
         this.nlp = new NLP();
         this.aiHandler = new AIHandler();
+        this.buttonHandler = new ButtonHandler();
+        this.ownerStatus = 'offline'; // offline, online, busy
         this.loadConfiguration();
     }
 
@@ -55,47 +58,126 @@ class MessageHandler {
 
     async processMessage(message) {
         try {
-            const messageText = message.body.toLowerCase().trim();
+            const messageText = message.body.trim();
             const isGroup = message.from.includes('@g.us');
+            const chatId = message.from;
 
-            // Skip group messages if disabled
-            if (isGroup && !this.settings.respondToGroups) {
+            // Skip group messages
+            if (isGroup) {
+                logger.info('Skipping group message');
                 return null;
             }
 
-            // Check business hours if enabled
-            if (this.settings.businessHours.enabled && !this.isWithinBusinessHours()) {
-                return this.getRandomResponse('outOfHours') || "Thank you for your message. We'll get back to you during business hours.";
+            // Get contact information
+            let contact;
+            try {
+                contact = await message.getContact();
+            } catch (error) {
+                logger.warn('Could not get contact info:', error);
+                contact = { pushname: 'Unknown', name: 'Unknown', number: message.from };
             }
 
-            // Process commands first
-            const commandResponse = this.processCommand(messageText);
+            // Handle text-based button commands
+            if (messageText.toLowerCase().includes('start ai chat') || messageText.toLowerCase().includes('🤖')) {
+                const buttonResponse = await this.buttonHandler.handleButtonClick('start_ai_chat', message);
+                return buttonResponse;
+            }
+            
+            if (messageText.toLowerCase().includes('stop ai chat') || messageText.toLowerCase().includes('❌')) {
+                const buttonResponse = await this.buttonHandler.handleButtonClick('stop_ai_chat', message);
+                return buttonResponse;
+            }
+
+            // Check if AI chat is active for this user
+            if (this.buttonHandler.isAIChatActive(chatId)) {
+                return await this.handleAIChatMessage(message, contact);
+            }
+
+            // Process commands
+            const commandResponse = this.processCommand(messageText.toLowerCase());
             if (commandResponse) {
                 return commandResponse;
             }
 
-            // Use NLP for intent detection
-            if (this.settings.enableNLP) {
-                const intent = this.nlp.detectIntent(messageText);
-                const intentResponse = this.getResponseByIntent(intent);
-                if (intentResponse) {
-                    return intentResponse;
-                }
-            }
-
-            // Keyword-based responses
-            const keywordResponse = this.processKeywords(messageText);
-            if (keywordResponse) {
-                return keywordResponse;
-            }
-
-            // Fallback response
-            return this.getRandomResponse('fallback');
+            // Show owner status and contact details
+            return this.createOwnerStatusMessage(contact, message);
 
         } catch (error) {
             logger.error('Error processing message:', error);
-            return "I'm experiencing some technical difficulties. Please try again later.";
+            return "Sorry, I encountered an error processing your message.";
         }
+    }
+
+    async handleAIChatMessage(message, contact) {
+        const messageText = message.body.trim();
+        const chatId = message.from;
+
+        try {
+            // Generate AI response
+            const senderInfo = {
+                name: contact.pushname || contact.name || 'Unknown',
+                number: contact.number || message.from
+            };
+
+            const aiResponse = await this.aiHandler.generateResponse(messageText, senderInfo);
+            
+            if (aiResponse) {
+                // Return AI response with stop button
+                return {
+                    type: 'button',
+                    content: this.buttonHandler.createButtonMessage(
+                        aiResponse,
+                        [this.buttonHandler.createStopAIButton()]
+                    )
+                };
+            } else {
+                return {
+                    type: 'button',
+                    content: this.buttonHandler.createButtonMessage(
+                        "I'm having trouble understanding. Could you rephrase that?",
+                        [this.buttonHandler.createStopAIButton()]
+                    )
+                };
+            }
+
+        } catch (error) {
+            logger.error('Error in AI chat:', error);
+            return {
+                type: 'button',
+                content: this.buttonHandler.createButtonMessage(
+                    "Sorry, I'm experiencing technical difficulties. Please try again.",
+                    [this.buttonHandler.createStopAIButton()]
+                )
+            };
+        }
+    }
+
+    createOwnerStatusMessage(contact, message) {
+        const contactName = contact.pushname || contact.name || 'Unknown';
+        const contactNumber = contact.number || message.from.replace('@c.us', '');
+        const messageTime = new Date().toLocaleString();
+
+        let statusText;
+        if (this.ownerStatus === 'offline') {
+            statusText = `Hello ${contactName}! 👋\n\n🔴 My owner is currently offline and will be back within a few minutes.\n\nPlease don't spam messages as they will be reviewed later.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Want to chat with AI assistant while waiting?*`;
+        } else if (this.ownerStatus === 'busy') {
+            statusText = `Hello ${contactName}! 👋\n\n🟡 My owner is currently busy but will respond soon.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Want to chat with AI assistant while waiting?*`;
+        } else {
+            statusText = `Hello ${contactName}! 👋\n\n🟢 My owner should respond shortly.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Want to chat with AI assistant?*`;
+        }
+
+        return {
+            type: 'button',
+            content: this.buttonHandler.createButtonMessage(
+                statusText,
+                [this.buttonHandler.createStartAIButton()]
+            )
+        };
+    }
+
+    setOwnerStatus(status) {
+        this.ownerStatus = status;
+        logger.info(`Owner status changed to: ${status}`);
     }
 
     processCommand(messageText) {
