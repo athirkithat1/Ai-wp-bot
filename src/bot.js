@@ -150,6 +150,16 @@ class Bot extends EventEmitter {
                 return;
             }
 
+            // Handle button responses
+            if (message.hasQuotedMsg && message.body.trim() === '') {
+                // This might be a button response, extract the button id
+                const quotedMsg = await message.getQuotedMessage();
+                if (quotedMsg && quotedMsg.fromMe) {
+                    // User clicked a button, treat empty message as button click
+                    return;
+                }
+            }
+
             this.emit('message_received');
             
             logger.info(`Received message from ${message.from}: ${message.body}`);
@@ -185,21 +195,29 @@ class Bot extends EventEmitter {
             await new Promise(resolve => setTimeout(resolve, randomDelay));
             
             // Handle different response types
-            let messageText;
             if (typeof response === 'object' && response.type) {
                 if (response.type === 'button') {
-                    messageText = response.content.text;
+                    // Try to send interactive buttons, fallback to text if not supported
+                    try {
+                        await chat.sendMessage(response.content.text, {
+                            buttons: response.content.buttons.map(btn => ({
+                                body: btn.buttonText.displayText,
+                                id: btn.buttonId
+                            }))
+                        });
+                    } catch (error) {
+                        // Fallback to text with button options
+                        const buttonText = response.content.text + '\n\n' + 
+                            response.content.buttons.map(btn => `• ${btn.buttonText.displayText}`).join('\n');
+                        await chat.sendMessage(buttonText);
+                    }
                 } else if (response.type === 'text') {
-                    messageText = response.content;
-                } else {
-                    messageText = JSON.stringify(response);
+                    await chat.sendMessage(response.content);
                 }
             } else {
-                messageText = response;
+                // Send regular text message
+                await chat.sendMessage(response);
             }
-            
-            // Send the response
-            await chat.sendMessage(messageText);
             
             this.emit('message_replied');
             logger.info(`Sent response to ${originalMessage.from}`);

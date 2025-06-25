@@ -13,6 +13,7 @@ class MessageHandler {
         this.aiHandler = new AIHandler();
         this.buttonHandler = new ButtonHandler();
         this.ownerStatus = 'offline'; // offline, online, busy
+        this.contactedUsers = new Set(); // Track users who have been contacted
         this.loadConfiguration();
     }
 
@@ -77,15 +78,20 @@ class MessageHandler {
                 contact = { pushname: 'Unknown', name: 'Unknown', number: message.from };
             }
 
-            // Handle text-based button commands
-            if (messageText.toLowerCase().includes('start ai chat') || messageText.toLowerCase().includes('🤖')) {
+            // Handle button commands and user commands
+            if (messageText.toLowerCase().includes('start ai chat') || messageText.toLowerCase().includes('🤖') || messageText.toLowerCase() === '/start' || messageText.toLowerCase() === '/ai') {
                 const buttonResponse = await this.buttonHandler.handleButtonClick('start_ai_chat', message);
                 return buttonResponse;
             }
             
-            if (messageText.toLowerCase().includes('stop ai chat') || messageText.toLowerCase().includes('❌')) {
+            if (messageText.toLowerCase().includes('stop ai chat') || messageText.toLowerCase().includes('❌') || messageText.toLowerCase() === '/stop') {
                 const buttonResponse = await this.buttonHandler.handleButtonClick('stop_ai_chat', message);
                 return buttonResponse;
+            }
+
+            // Check if user wants help/commands
+            if (messageText.toLowerCase() === '/help' || messageText.toLowerCase() === 'help' || messageText.toLowerCase() === '/commands') {
+                return this.getHelpMessage();
             }
 
             // Check if AI chat is active for this user
@@ -93,16 +99,14 @@ class MessageHandler {
                 return await this.handleAIChatMessage(message, contact);
             }
 
-            // Process commands - but only special commands, not regular conversation
-            if (messageText.toLowerCase().startsWith('/') || messageText.toLowerCase() === 'help') {
-                const commandResponse = this.processCommand(messageText.toLowerCase());
-                if (commandResponse) {
-                    return commandResponse;
-                }
+            // Only show welcome message on first contact or specific triggers
+            if (this.isFirstMessage(chatId) || messageText.toLowerCase().includes('hello') || messageText.toLowerCase().includes('hi') || messageText.toLowerCase().includes('hey')) {
+                this.markUserContacted(chatId);
+                return this.createOwnerStatusMessage(contact, message);
             }
 
-            // Show owner status and contact details
-            return this.createOwnerStatusMessage(contact, message);
+            // For other messages, show brief response with commands
+            return this.getBriefResponse();
 
         } catch (error) {
             logger.error('Error processing message:', error);
@@ -129,11 +133,25 @@ class MessageHandler {
             }
             
             if (aiResponse) {
-                return aiResponse + '\n\n• ❌ Stop AI Chat\n\nType "stop ai chat" or "❌" to end AI conversation.';
+                return {
+                    type: 'button',
+                    content: {
+                        text: aiResponse,
+                        buttons: [this.buttonHandler.createStopAIButton()],
+                        headerType: 1
+                    }
+                };
             } else {
                 // Knowledge-based fallback responses
                 const fallbackResponse = this.getKnowledgeBasedResponse(messageText);
-                return fallbackResponse + '\n\n• ❌ Stop AI Chat\n\nType "stop ai chat" or "❌" to end AI conversation.';
+                return {
+                    type: 'button',
+                    content: {
+                        text: fallbackResponse,
+                        buttons: [this.buttonHandler.createStopAIButton()],
+                        headerType: 1
+                    }
+                };
             }
 
         } catch (error) {
@@ -149,14 +167,44 @@ class MessageHandler {
 
         let statusText;
         if (this.ownerStatus === 'offline') {
-            statusText = `Hello ${contactName}!\n\n🔴 My owner is currently offline and will be back within a few minutes.\n\nPlease don't spam messages as they will be reviewed later.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Want to chat with AI assistant while waiting?*\n\n• 🤖 Start AI Chat\n\nType "start ai chat" or "🤖" to begin AI conversation.`;
+            statusText = `Hello ${contactName}!\n\n🔴 My owner is currently offline and will be back within a few minutes.\n\nPlease don't spam messages as they will be reviewed later.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}`;
         } else if (this.ownerStatus === 'busy') {
-            statusText = `Hello ${contactName}!\n\n🟡 My owner is currently busy but will respond soon.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Want to chat with AI assistant while waiting?*\n\n• 🤖 Start AI Chat\n\nType "start ai chat" or "🤖" to begin AI conversation.`;
+            statusText = `Hello ${contactName}!\n\n🟡 My owner is currently busy but will respond soon.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}`;
         } else {
-            statusText = `Hello ${contactName}!\n\n🟢 My owner should respond shortly.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Want to chat with AI assistant?*\n\n• 🤖 Start AI Chat\n\nType "start ai chat" or "🤖" to begin AI conversation.`;
+            statusText = `Hello ${contactName}!\n\n🟢 My owner should respond shortly.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}`;
         }
 
-        return statusText;
+        return {
+            type: 'button',
+            content: {
+                text: statusText,
+                buttons: [this.buttonHandler.createStartAIButton()],
+                headerType: 1
+            }
+        };
+    }
+
+    getBriefResponse() {
+        return {
+            type: 'button',
+            content: {
+                text: `Use these commands:\n/start - Begin AI chat\n/help - Show all commands`,
+                buttons: [this.buttonHandler.createStartAIButton()],
+                headerType: 1
+            }
+        };
+    }
+
+    getHelpMessage() {
+        return `*Available Commands:*\n\n/start or /ai - Start AI chat\n/stop - Stop AI chat\n/help - Show this help\n\nOr use the buttons below for quick access.`;
+    }
+
+    isFirstMessage(chatId) {
+        return !this.contactedUsers.has(chatId);
+    }
+
+    markUserContacted(chatId) {
+        this.contactedUsers.add(chatId);
     }
 
     getKnowledgeBasedResponse(messageText) {

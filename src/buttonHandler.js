@@ -66,9 +66,16 @@ class ButtonHandler {
                 
                 this.startAIChat(chatId, contactName);
                 
-                const welcomeMessage = `Hi ${contactName}! 🤖\n\nAI chat is now active. I can help you with questions, information, and general conversation.\n\nWhat would you like to know?\n\n• ❌ Stop AI Chat\n\nType "stop ai chat" or "❌" to end AI conversation.`;
+                const welcomeMessage = `Hi ${contactName}! 🤖\n\nAI chat is now active. I can help you with questions, information, and general conversation.\n\nWhat would you like to know?`;
                 
-                return welcomeMessage;
+                return {
+                    type: 'button',
+                    content: {
+                        text: welcomeMessage,
+                        buttons: [this.createStopAIButton()],
+                        headerType: 1
+                    }
+                };
             }
             
             if (buttonId === 'stop_ai_chat') {
