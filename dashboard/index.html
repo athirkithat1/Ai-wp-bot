@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp UserBot Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="bg-primary text-white p-3 mb-4">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="h3 mb-0">
+                        <i class="fab fa-whatsapp me-2"></i>
+                        WhatsApp UserBot Dashboard
+                    </h1>
+                </div>
+                <div class="col-auto">
+                    <span id="connection-status" class="badge bg-secondary">
+                        <i class="fas fa-circle me-1"></i>
+                        Checking...
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title">Messages Received</h6>
+                                        <h3 id="messages-received">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-inbox fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title">Messages Replied</h6>
+                                        <h3 id="messages-replied">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-reply fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title">Uptime</h6>
+                                        <h3 id="uptime">0h 0m</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-clock fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title">Last Activity</h6>
+                                        <small id="last-activity">Never</small>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-activity fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Message Activity</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="activityChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Response Rate</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="responseChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Logs -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Recent Logs</h5>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="refreshLogs()">
+                            <i class="fas fa-refresh"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="logs-container" class="logs-container">
+                            <div class="text-center p-3">Loading logs...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <!-- Control Panel -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Control Panel</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-warning" onclick="restartBot()">
+                                <i class="fas fa-restart"></i> Restart Bot
+                            </button>
+                            <button class="btn btn-info" onclick="refreshStats()">
+                                <i class="fas fa-refresh"></i> Refresh Stats
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearLogs()">
+                                <i class="fas fa-trash"></i> Clear Logs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuration -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Quick Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="enableNLP" checked>
+                            <label class="form-check-label" for="enableNLP">
+                                Enable NLP Processing
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="respondToGroups">
+                            <label class="form-check-label" for="respondToGroups">
+                                Respond to Groups
+                            </label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="enableTyping" checked>
+                            <label class="form-check-label" for="enableTyping">
+                                Enable Typing Indicator
+                            </label>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="saveSettings()">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- System Info -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">System Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <tr>
+                                <td>Version:</td>
+                                <td><span class="badge bg-secondary">1.0.0</span></td>
+                            </tr>
+                            <tr>
+                                <td>Node.js:</td>
+                                <td><span id="node-version">-</span></td>
+                            </tr>
+                            <tr>
+                                <td>Memory Usage:</td>
+                                <td><span id="memory-usage">-</span></td>
+                            </tr>
+                            <tr>
+                                <td>Started:</td>
+                                <td><span id="start-time">-</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom JS -->
+    <script src="app.js"></script>
+</body>
+</html>

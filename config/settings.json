@@ -1,0 +1,59 @@
+{
+    "bot": {
+        "name": "WhatsApp Assistant",
+        "version": "1.0.0",
+        "enableNLP": true,
+        "respondToGroups": false,
+        "enableTypingIndicator": true,
+        "maxResponseLength": 500
+    },
+    "autoReply": {
+        "enabled": true,
+        "delayMin": 1000,
+        "delayMax": 3000,
+        "randomizeDelay": true
+    },
+    "businessHours": {
+        "enabled": false,
+        "timezone": "UTC",
+        "start": "09:00",
+        "end": "17:00",
+        "workdays": [1, 2, 3, 4, 5],
+        "outOfHoursMessage": "We're currently out of office. Business hours: 9 AM - 5 PM (Mon-Fri)"
+    },
+    "rateLimiting": {
+        "enabled": true,
+        "maxMessagesPerMinute": 10,
+        "maxMessagesPerHour": 100,
+        "maxMessagesPerDay": 500,
+        "cooldownPeriod": 60000,
+        "warningThreshold": 0.8
+    },
+    "security": {
+        "allowedContacts": [],
+        "blockedContacts": [],
+        "enableContactVerification": false,
+        "logSuspiciousActivity": true
+    },
+    "features": {
+        "enableCommands": true,
+        "enableKeywordDetection": true,
+        "enableSentimentAnalysis": true,
+        "enableEntityExtraction": false,
+        "saveConversationHistory": false
+    },
+    "notifications": {
+        "enableStartupNotification": false,
+        "enableErrorNotification": true,
+        "enableDailyStats": false,
+        "adminContacts": []
+    },
+    "logging": {
+        "level": "INFO",
+        "enableFileLogging": true,
+        "enableConsoleLogging": true,
+        "rotateLogFiles": true,
+        "maxLogFileSize": "10MB",
+        "maxLogFiles": 5
+    }
+}

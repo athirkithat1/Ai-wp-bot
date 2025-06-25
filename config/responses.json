@@ -1,0 +1,65 @@
+{
+    "greeting": [
+        "Hello! How can I help you today?",
+        "Hi there! What can I do for you?",
+        "Hey! Nice to hear from you. How can I assist?",
+        "Greetings! I'm here to help with any questions you have.",
+        "Hello! I'm your automated assistant. What would you like to know?"
+    ],
+    "help": [
+        "Here are the available commands:\n• help - Show this message\n• info - Get information about me\n• contact - Get contact details\n• time - Get current time\n• ping - Check if I'm online",
+        "I can help you with:\n• General questions and information\n• Contact details\n• Basic commands\n\nType any of these commands or just ask me anything!"
+    ],
+    "info": [
+        "I'm an automated WhatsApp assistant designed to help answer your questions and provide information. I'm available 24/7!",
+        "I'm a smart chatbot that can understand and respond to your messages. I'm here to make your experience better and more efficient!",
+        "I'm your virtual assistant powered by AI. I can help with information, answer questions, and provide support whenever you need it."
+    ],
+    "contact": [
+        "You can reach us through:\n📧 Email: contact@example.com\n📞 Phone: +1-555-0123\n🌐 Website: www.example.com",
+        "Contact Information:\n• Email: support@example.com\n• Phone: +1-555-0123\n• Business Hours: 9 AM - 5 PM (Mon-Fri)"
+    ],
+    "thanks": [
+        "You're welcome! Happy to help! 😊",
+        "No problem at all! Anytime!",
+        "Glad I could help! Is there anything else you need?",
+        "You're welcome! Feel free to ask if you have more questions.",
+        "My pleasure! I'm here whenever you need assistance."
+    ],
+    "goodbye": [
+        "Goodbye! Have a wonderful day! 👋",
+        "See you later! Take care!",
+        "Farewell! Don't hesitate to reach out if you need anything.",
+        "Bye! It was great talking with you!",
+        "Have a great day ahead! See you soon! ✨"
+    ],
+    "fallback": [
+        "I'm sorry, I didn't quite understand that. Could you please rephrase your question?",
+        "I'm not sure how to respond to that. Type 'help' to see what I can do!",
+        "Hmm, I didn't catch that. Can you try asking in a different way?",
+        "I'm still learning! Could you be more specific about what you need help with?",
+        "I didn't understand your message. Type 'help' for available commands or try rephrasing your question."
+    ],
+    "compliment": [
+        "Thank you so much! I really appreciate the kind words! 😊",
+        "That's very nice of you to say! I'm glad I could help!",
+        "Thank you! I'm here to provide the best assistance possible!",
+        "Your feedback means a lot! Thank you for the compliment!"
+    ],
+    "complaint": [
+        "I'm sorry to hear that you're having issues. Let me know how I can help improve your experience.",
+        "I apologize for any inconvenience. Please let me know what went wrong so I can assist better.",
+        "I understand your frustration. How can I help resolve this issue for you?",
+        "I'm sorry about that. Your feedback helps me improve. What can I do to help?"
+    ],
+    "outOfHours": [
+        "Thank you for your message! Our business hours are 9 AM - 5 PM (Monday to Friday). We'll get back to you as soon as possible.",
+        "Hi! We're currently outside of business hours (9 AM - 5 PM, Mon-Fri). Your message is important to us and we'll respond during our next business day."
+    ],
+    "question": [
+        "That's a great question! Let me help you with that.",
+        "I'd be happy to answer that for you!",
+        "Good question! Here's what I can tell you:",
+        "Let me provide you with some information about that."
+    ]
+}
