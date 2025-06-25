@@ -1,17 +1,21 @@
 # WhatsApp Bot Setup Guide
 
-## 1. Adding Your Owner Number
+## Quick Start Instructions
 
-### Step 1: Set Your WhatsApp Number as Owner
-1. Go to the "Secrets" tab in your Replit project (lock icon on the left)
-2. Click "New Secret" 
-3. Add this secret:
-   - Key: `OWNER_NUMBER`
-   - Value: Your WhatsApp number WITHOUT the + symbol
-   - Example: If your number is +919876543210, enter: `919876543210`
+### 1. Set Your Owner Number
+1. Click on "Secrets" tab (lock icon) in Replit sidebar
+2. Click "New Secret"
+3. Key: `OWNER_NUMBER`
+4. Value: Your WhatsApp number without + symbol (e.g., 919876543210)
+5. Click "Add Secret"
+6. Restart the bot workflow
 
-### Step 2: Restart the Bot
-After adding the secret, restart the workflow by clicking the restart button in the console.
+### 2. Connect Your WhatsApp
+1. Make sure bot is running (check console)
+2. Click "View QR Code" button in dashboard
+3. Open WhatsApp on your phone
+4. Go to Settings > Linked Devices > Link a Device
+5. Scan the QR code
 
 ## 2. Connecting Bot to Another WhatsApp Number
 

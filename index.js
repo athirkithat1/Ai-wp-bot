@@ -23,6 +23,23 @@ let botStats = {
 
 // Dashboard API endpoints
 app.get('/api/status', (req, res) => {
+    const status = botInstance?.messageHandler?.ownerStatus || 'offline';
+    res.json({ status: status });
+});
+
+app.post('/api/status', (req, res) => {
+    const { status } = req.body;
+    if (['online', 'offline', 'busy'].includes(status)) {
+        if (botInstance?.messageHandler) {
+            botInstance.messageHandler.setOwnerStatus(status);
+        }
+        res.json({ success: true, status: status });
+    } else {
+        res.status(400).json({ error: 'Invalid status' });
+    }
+});
+
+app.get('/api/stats', (req, res) => {
     res.json({
         ...botStats,
         uptime: botStats.startTime ? Date.now() - botStats.startTime : 0
@@ -32,6 +49,50 @@ app.get('/api/status', (req, res) => {
 app.get('/api/logs', (req, res) => {
     const logs = logger.getRecentLogs(20);
     res.json({ logs });
+});
+
+// Restart bot endpoint
+app.post('/api/restart', (req, res) => {
+    try {
+        if (botInstance) {
+            botInstance.destroy();
+        }
+        setTimeout(() => {
+            initializeBot();
+        }, 2000);
+        res.json({ success: true, message: 'Bot restart initiated' });
+    } catch (error) {
+        logger.error('Error restarting bot:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Change WhatsApp account endpoint
+app.post('/api/change-account', (req, res) => {
+    try {
+        const fs = require('fs');
+        
+        // Remove WhatsApp session directories
+        const authPath = path.join(__dirname, '.wwebjs_auth');
+        const cachePath = path.join(__dirname, '.wwebjs_cache');
+        
+        if (fs.existsSync(authPath)) {
+            fs.rmSync(authPath, { recursive: true, force: true });
+        }
+        if (fs.existsSync(cachePath)) {
+            fs.rmSync(cachePath, { recursive: true, force: true });
+        }
+        
+        // Destroy current bot connection if exists
+        if (botInstance && botInstance.client) {
+            botInstance.client.destroy().catch(() => {});
+        }
+        
+        res.json({ success: true, message: 'WhatsApp session cleared successfully' });
+    } catch (error) {
+        logger.error('Error changing account:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
 });
 
 // QR Code endpoint for easier scanning
@@ -134,6 +195,10 @@ function initializeBot() {
         });
 
         botInstance.initialize();
+        
+        // Store bot instance globally for API access
+        global.bot = botInstance;
+        
     } catch (error) {
         logger.error('Failed to initialize bot:', error);
         process.exit(1);
