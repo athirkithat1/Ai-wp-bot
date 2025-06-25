@@ -24,11 +24,11 @@
     },
     "rateLimiting": {
         "enabled": true,
-        "maxMessagesPerMinute": 10,
-        "maxMessagesPerHour": 100,
-        "maxMessagesPerDay": 500,
-        "cooldownPeriod": 60000,
-        "warningThreshold": 0.8
+        "maxMessagesPerMinute": 30,
+        "maxMessagesPerHour": 200,
+        "maxMessagesPerDay": 1000,
+        "cooldownPeriod": 5000,
+        "warningThreshold": 0.9
     },
     "security": {
         "allowedContacts": [],

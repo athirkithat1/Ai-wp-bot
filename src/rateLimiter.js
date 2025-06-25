@@ -4,11 +4,11 @@ class RateLimiter {
     constructor() {
         this.messageHistory = new Map();
         this.globalSettings = {
-            maxMessagesPerMinute: 10,
-            maxMessagesPerHour: 100,
-            maxMessagesPerDay: 500,
-            cooldownPeriod: 60000, // 1 minute
-            warningThreshold: 0.8 // 80% of limit
+            maxMessagesPerMinute: 30,
+            maxMessagesPerHour: 200,
+            maxMessagesPerDay: 1000,
+            cooldownPeriod: 5000, // 5 seconds
+            warningThreshold: 0.9 // 90% of limit
         };
         
         // Clean up old entries periodically
@@ -29,8 +29,12 @@ class RateLimiter {
 
             const userHistory = this.messageHistory.get(chatId);
             
-            // Check cooldown period
+            // Check cooldown period - but allow more frequent responses for natural conversation
             if (now - userHistory.lastMessage < this.globalSettings.cooldownPeriod) {
+                // Allow if it's been at least 3 seconds and user is in active conversation
+                if (now - userHistory.lastMessage > 3000 && userHistory.messages.length < 5) {
+                    return true;
+                }
                 logger.debug(`Chat ${chatId} is in cooldown period`);
                 return false;
             }
