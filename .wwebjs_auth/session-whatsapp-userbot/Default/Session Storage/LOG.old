@@ -1,3 +1,2 @@
-2025/06/25-11:11:30.726 d01 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Session Storage/MANIFEST-000001
-2025/06/25-11:11:30.727 d01 Recovering log #3
-2025/06/25-11:11:30.728 d01 Reusing old log /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Session Storage/000003.log 
+2025/06/25-11:14:11.031 efd Creating DB /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Session Storage since it was missing.
+2025/06/25-11:14:11.040 efd Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Session Storage/MANIFEST-000001

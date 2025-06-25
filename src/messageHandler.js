@@ -373,6 +373,45 @@ class MessageHandler {
         if (text.includes('what is chemistry')) {
             return 'Chemistry is the science that studies the composition, structure, properties, and reactions of matter at the atomic and molecular level.';
         }
+        if (text.includes('what is biology')) {
+            return 'Biology is the science that studies living organisms and their interactions with each other and their environment. It includes botany, zoology, genetics, and ecology.';
+        }
+        if (text.includes('what is mathematics') || text.includes('what is math')) {
+            return 'Mathematics is the science of numbers, quantity, and space. It includes arithmetic, algebra, geometry, calculus, and statistics.';
+        }
+        
+        // Historical figures
+        if (text.includes('mahatma gandhi') || text.includes('gandhi')) {
+            return 'Mahatma Gandhi was an Indian independence activist known for his non-violent resistance movement against British rule. He is called the Father of the Nation in India.';
+        }
+        if (text.includes('abraham lincoln')) {
+            return 'Abraham Lincoln was the 16th President of the United States who led the country during the Civil War and issued the Emancipation Proclamation to free slaves.';
+        }
+        if (text.includes('nelson mandela')) {
+            return 'Nelson Mandela was a South African anti-apartheid activist and politician who served as President of South Africa from 1994 to 1999. He won the Nobel Peace Prize in 1993.';
+        }
+        if (text.includes('albert einstein')) {
+            return 'Albert Einstein was a German-born theoretical physicist who developed the theory of relativity. He won the Nobel Prize in Physics in 1921 and is considered one of the greatest scientists of all time.';
+        }
+        
+        // World Wars
+        if (text.includes('world war 1') || text.includes('ww1') || text.includes('first world war')) {
+            return 'World War I (1914-1918) was a global conflict primarily between the Allied Powers and Central Powers. It resulted in over 16 million deaths and led to significant political changes worldwide.';
+        }
+        if (text.includes('world war 2') || text.includes('ww2') || text.includes('second world war')) {
+            return 'World War II (1939-1945) was the deadliest conflict in human history, involving most of the world\'s nations. It ended with the Allied victory and the use of atomic bombs on Japan.';
+        }
+        
+        // Technology
+        if (text.includes('who invented') && text.includes('internet')) {
+            return 'The internet was developed by multiple people, but Tim Berners-Lee invented the World Wide Web in 1989-1991. ARPANET, the precursor to the internet, was developed in the 1960s.';
+        }
+        if (text.includes('who invented') && text.includes('telephone')) {
+            return 'Alexander Graham Bell is credited with inventing the telephone in 1876, though there were other inventors working on similar devices around the same time.';
+        }
+        if (text.includes('who invented') && text.includes('computer')) {
+            return 'The computer was developed by many inventors. Charles Babbage designed the first mechanical computer, while modern electronic computers were developed by people like Alan Turing and John von Neumann.';
+        }
         
         // History and Government questions
         if (text.includes('who wrote') && text.includes('aadijeevitham')) {
@@ -389,6 +428,23 @@ class MessageHandler {
         }
         if (text.includes('current status') && text.includes('india')) {
             return 'India is currently the world\'s most populous country and 5th largest economy. It continues to grow as a major global power with significant technological and economic development.';
+        }
+        
+        // Sports personalities
+        if (text.includes('virat kohli') || text.includes('virat kholi')) {
+            return 'Virat Kohli is an Indian international cricketer and former captain of the India national cricket team. He is widely considered one of the greatest batsmen in cricket history, known for his aggressive batting style and exceptional run-scoring ability across all formats.';
+        }
+        if (text.includes('ms dhoni') || text.includes('dhoni')) {
+            return 'MS Dhoni is a former Indian international cricketer and captain. Known as "Captain Cool," he led India to victory in the 2007 T20 World Cup, 2011 Cricket World Cup, and 2013 Champions Trophy. He is famous for his finishing abilities and wicket-keeping skills.';
+        }
+        if (text.includes('sachin tendulkar')) {
+            return 'Sachin Tendulkar is a former Indian international cricketer, widely regarded as one of the greatest batsmen in cricket history. He scored 100 international centuries and is known as the "Master Blaster" and "God of Cricket."';
+        }
+        if (text.includes('messi') || text.includes('lionel messi')) {
+            return 'Lionel Messi is an Argentine professional footballer who plays as a forward for Inter Miami and captains the Argentina national team. He has won 8 Ballon d\'Or awards and is considered one of the greatest footballers of all time.';
+        }
+        if (text.includes('cristiano ronaldo') || text.includes('ronaldo')) {
+            return 'Cristiano Ronaldo is a Portuguese professional footballer who plays as a forward for Al Nassr and captains the Portugal national team. He has won 5 Ballon d\'Or awards and is one of the most successful players in football history.';
         }
         
         // Time and date
@@ -421,9 +477,51 @@ class MessageHandler {
             return 'DNA (Deoxyribonucleic Acid) is the molecule that carries genetic information in all living organisms. It has a double helix structure made of four bases: A, T, G, and C.';
         }
 
+        // More comprehensive knowledge
+        if (text.includes('largest country')) {
+            return 'Russia is the largest country in the world by land area, covering about 17.1 million square kilometers.';
+        }
+        if (text.includes('smallest country')) {
+            return 'Vatican City is the smallest country in the world, with an area of just 0.17 square miles (0.44 square kilometers).';
+        }
+        if (text.includes('tallest mountain')) {
+            return 'Mount Everest is the tallest mountain in the world, standing at 8,848.86 meters (29,031.7 feet) above sea level.';
+        }
+        if (text.includes('longest river')) {
+            return 'The Nile River is generally considered the longest river in the world at approximately 6,650 kilometers (4,130 miles).';
+        }
+        if (text.includes('largest ocean')) {
+            return 'The Pacific Ocean is the largest ocean in the world, covering about one-third of Earth\'s surface.';
+        }
+        if (text.includes('fastest animal')) {
+            return 'The peregrine falcon is the fastest animal when diving, reaching speeds over 240 mph (386 km/h). The cheetah is the fastest land animal at 70 mph (112 km/h).';
+        }
+        if (text.includes('largest animal')) {
+            return 'The blue whale is the largest animal on Earth, reaching lengths of up to 100 feet (30 meters) and weights of up to 200 tons.';
+        }
+        
+        // Solar system
+        if (text.includes('planets') && text.includes('solar system')) {
+            return 'There are 8 planets in our solar system: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune. Pluto was reclassified as a dwarf planet in 2006.';
+        }
+        if (text.includes('largest planet')) {
+            return 'Jupiter is the largest planet in our solar system, with a mass greater than all other planets combined.';
+        }
+        if (text.includes('closest planet to sun')) {
+            return 'Mercury is the closest planet to the Sun, orbiting at an average distance of about 36 million miles (58 million kilometers).';
+        }
+        
+        // Indian independence
+        if (text.includes('indian independence') || (text.includes('independence') && text.includes('india'))) {
+            return 'India gained independence from British rule on August 15, 1947. The independence movement was led by leaders like Mahatma Gandhi, Jawaharlal Nehru, and Subhas Chandra Bose.';
+        }
+        if (text.includes('first prime minister') && text.includes('india')) {
+            return 'Jawaharlal Nehru was the first Prime Minister of independent India, serving from 1947 to 1964.';
+        }
+        
         // Check for basic patterns
         if (text.includes('who is') || text.includes('what is') || text.includes('how') || text.includes('why') || text.includes('when') || text.includes('where')) {
-            return `I can help you with questions about:\n• Geography: capitals of countries and states\n• Science: physics, chemistry, biology, anatomy\n• History: presidents, ministers, government officials\n• Math: basic calculations and formulas\n• General knowledge and current information\n\nCould you be more specific about what you'd like to know?`;
+            return `I can help you with questions about:\n• Geography: capitals, countries, rivers, mountains\n• Science: physics, chemistry, biology, space\n• History: world wars, independence movements, famous people\n• Sports: cricket, football, tennis players and facts\n• Technology: inventions, computers, internet\n• General knowledge: largest, smallest, fastest records\n\nCould you be more specific about what you'd like to know?`;
         }
         
         // Default helpful response

@@ -1,3 +1,2 @@
-2025/06/25-11:11:30.238 d01 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Local Storage/leveldb/MANIFEST-000001
-2025/06/25-11:11:30.252 d01 Recovering log #6
-2025/06/25-11:11:30.254 d01 Reusing old log /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Local Storage/leveldb/000006.log 
+2025/06/25-11:14:10.706 efd Creating DB /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Local Storage/leveldb since it was missing.
+2025/06/25-11:14:10.740 efd Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Local Storage/leveldb/MANIFEST-000001

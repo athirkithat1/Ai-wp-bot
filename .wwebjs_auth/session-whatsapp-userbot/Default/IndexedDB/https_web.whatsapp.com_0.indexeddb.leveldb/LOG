@@ -1,4 +1,55 @@
-2025/06/25-11:12:09.156 dcb Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2025/06/25-11:12:09.157 dcb Recovering log #270
-2025/06/25-11:12:09.174 dcb Reusing old log /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000270.log 
-2025/06/25-11:12:10.762 dcc Manual compaction at level-0 from '\x00C\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00D\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/06/25-11:20:04.765 fd9 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/06/25-11:20:04.765 fd9 Recovering log #723
+2025/06/25-11:20:04.766 fd9 Reusing old log /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000723.log 
+2025/06/25-11:20:07.863 fde Level-0 table #745: started
+2025/06/25-11:20:07.914 fde Level-0 table #745: 65518 bytes OK
+2025/06/25-11:20:07.930 fde Delete type=0 #723
+2025/06/25-11:20:07.931 fd9 Manual compaction at level-0 from '\x00\x1a\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x1b\x00\x00\x00' @ 0 : 0; will stop at '\x00\x1a\x00\x00\x05' @ 3402345 : 1
+2025/06/25-11:20:07.931 fd9 Compacting 1@0 + 0@1 files
+2025/06/25-11:20:07.941 fd9 Generated table #746@0: 1149 keys, 30828 bytes
+2025/06/25-11:20:07.944 fd9 Generated table #747@0: 133 keys, 2606 bytes
+2025/06/25-11:20:07.944 fd9 Compacted 1@0 + 0@1 files => 33434 bytes
+2025/06/25-11:20:07.960 fd9 compacted to: files[ 0 2 17 0 0 0 0 ]
+2025/06/25-11:20:07.960 fd9 Delete type=2 #745
+2025/06/25-11:20:07.961 fd9 Manual compaction at level-0 from '\x00\x1a\x00\x00\x05' @ 3402345 : 1 .. '\x00\x1b\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/06/25-11:20:09.732 fd9 Compacting 1@1 + 10@2 files
+2025/06/25-11:20:09.825 fd9 Generated table #748@1: 50669 keys, 2212856 bytes
+2025/06/25-11:20:09.956 fd9 Generated table #749@1: 43508 keys, 2210745 bytes
+2025/06/25-11:20:10.027 fd9 Generated table #750@1: 197 keys, 2115461 bytes
+2025/06/25-11:20:10.044 fd9 Generated table #751@1: 127 keys, 2168834 bytes
+2025/06/25-11:20:10.066 fd9 Generated table #752@1: 422 keys, 2118291 bytes
+2025/06/25-11:20:10.142 fd9 Generated table #753@1: 9797 keys, 2183297 bytes
+2025/06/25-11:20:10.219 fd9 Generated table #754@1: 18535 keys, 2158255 bytes
+2025/06/25-11:20:10.278 fd9 Generated table #755@1: 349 keys, 2112590 bytes
+2025/06/25-11:20:10.341 fd9 Generated table #756@1: 358 keys, 2115439 bytes
+2025/06/25-11:20:10.441 fd9 Generated table #757@1: 75246 keys, 1975233 bytes
+2025/06/25-11:20:10.441 fd9 Compacted 1@1 + 10@2 files => 21371001 bytes
+2025/06/25-11:20:10.450 fd9 compacted to: files[ 0 1 17 0 0 0 0 ]
+2025/06/25-11:20:10.451 fd9 Delete type=2 #733
+2025/06/25-11:20:10.451 fd9 Delete type=2 #734
+2025/06/25-11:20:10.451 fd9 Delete type=2 #735
+2025/06/25-11:20:10.451 fd9 Delete type=2 #736
+2025/06/25-11:20:10.451 fd9 Delete type=2 #737
+2025/06/25-11:20:10.451 fd9 Delete type=2 #738
+2025/06/25-11:20:10.451 fd9 Delete type=2 #739
+2025/06/25-11:20:10.451 fd9 Delete type=2 #740
+2025/06/25-11:20:10.451 fd9 Delete type=2 #741
+2025/06/25-11:20:10.451 fd9 Delete type=2 #742
+2025/06/25-11:20:10.451 fd9 Delete type=2 #746
+2025/06/25-11:20:24.502 fdb Compacting 1@1 + 7@2 files
+2025/06/25-11:20:24.689 fdb Generated table #758@1: 103192 keys, 2253512 bytes
+2025/06/25-11:20:24.766 fdb Generated table #759@1: 103145 keys, 2253206 bytes
+2025/06/25-11:20:24.903 fdb Generated table #760@1: 104045 keys, 2256902 bytes
+2025/06/25-11:20:24.991 fdb Generated table #761@1: 104168 keys, 2255467 bytes
+2025/06/25-11:20:25.074 fdb Generated table #762@1: 104447 keys, 2257266 bytes
+2025/06/25-11:20:25.175 fdb Generated table #763@1: 75964 keys, 1654659 bytes
+2025/06/25-11:20:25.175 fdb Compacted 1@1 + 7@2 files => 12931012 bytes
+2025/06/25-11:20:25.194 fdb compacted to: files[ 0 0 16 0 0 0 0 ]
+2025/06/25-11:20:25.195 fdb Delete type=2 #722
+2025/06/25-11:20:25.195 fdb Delete type=2 #727
+2025/06/25-11:20:25.195 fdb Delete type=2 #728
+2025/06/25-11:20:25.195 fdb Delete type=2 #729
+2025/06/25-11:20:25.195 fdb Delete type=2 #730
+2025/06/25-11:20:25.195 fdb Delete type=2 #731
+2025/06/25-11:20:25.195 fdb Delete type=2 #732
+2025/06/25-11:20:25.195 fdb Delete type=2 #747

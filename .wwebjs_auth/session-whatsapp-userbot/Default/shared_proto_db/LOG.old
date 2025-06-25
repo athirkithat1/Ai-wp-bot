@@ -1,3 +1,2 @@
-2025/06/25-11:11:30.272 d0a Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/shared_proto_db/MANIFEST-000001
-2025/06/25-11:11:30.272 d0a Recovering log #3
-2025/06/25-11:11:30.272 d0a Reusing old log /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/shared_proto_db/000003.log 
+2025/06/25-11:14:10.758 f03 Creating DB /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/shared_proto_db since it was missing.
+2025/06/25-11:14:10.769 f03 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/shared_proto_db/MANIFEST-000001
