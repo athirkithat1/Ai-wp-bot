@@ -91,7 +91,21 @@ A WhatsApp automation bot built with Node.js that can respond to messages using 
 
 ## Changelog
 
-- June 25, 2025. Initial setup
+- June 25, 2025: Initial setup and configuration
+- June 25, 2025: Fixed QR code display issues with smaller terminal output and web endpoint
+- June 25, 2025: Enhanced browser configuration and authentication error handling
+
+## Troubleshooting
+
+### WhatsApp Connection Issues
+If you get "Couldn't connect device" error when scanning QR code:
+
+1. **Clear WhatsApp session data**: Delete the `.wwebjs_auth` folder and restart
+2. **Try different network**: Some networks block WhatsApp Web connections
+3. **Update WhatsApp**: Ensure your phone has the latest WhatsApp version
+4. **Check phone connection**: Make sure your phone has stable internet
+5. **Restart bot**: Use the restart button in dashboard or restart the workflow
+6. **Try multiple times**: Sometimes it takes 2-3 attempts to connect successfully
 
 ## User Preferences
 

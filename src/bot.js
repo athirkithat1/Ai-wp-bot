@@ -44,7 +44,10 @@ class Bot extends EventEmitter {
                     '--disable-ipc-flooding-protection',
                     '--disable-extensions',
                     '--disable-default-apps',
-                    '--disable-component-extensions-with-background-pages'
+                    '--disable-component-extensions-with-background-pages',
+                    '--disable-web-security',
+                    '--disable-features=VizDisplayCompositor',
+                    '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
                 ]
             };
 
@@ -102,6 +105,15 @@ class Bot extends EventEmitter {
 
         this.client.on('auth_failure', (msg) => {
             logger.error('Authentication failed:', msg);
+            logger.error('Try scanning the QR code again or restart the bot');
+        });
+
+        this.client.on('loading_screen', (percent, message) => {
+            logger.info(`Loading: ${percent}% - ${message}`);
+        });
+
+        this.client.on('change_state', (state) => {
+            logger.info(`Connection state changed: ${state}`);
         });
 
         // Message event

@@ -1,3 +1,2 @@
-2025/06/25-09:50:22.665 cdd Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Service Worker/Database/MANIFEST-000001
-2025/06/25-09:50:22.673 cdd Recovering log #3
-2025/06/25-09:50:22.674 cdd Reusing old log /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Service Worker/Database/000003.log 
+2025/06/25-09:54:57.743 f74 Creating DB /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Service Worker/Database since it was missing.
+2025/06/25-09:54:57.751 f74 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Service Worker/Database/MANIFEST-000001
