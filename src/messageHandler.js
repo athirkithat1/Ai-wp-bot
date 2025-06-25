@@ -93,10 +93,12 @@ class MessageHandler {
                 return await this.handleAIChatMessage(message, contact);
             }
 
-            // Process commands
-            const commandResponse = this.processCommand(messageText.toLowerCase());
-            if (commandResponse) {
-                return commandResponse;
+            // Process commands - but only special commands, not regular conversation
+            if (messageText.toLowerCase().startsWith('/') || messageText.toLowerCase() === 'help') {
+                const commandResponse = this.processCommand(messageText.toLowerCase());
+                if (commandResponse) {
+                    return commandResponse;
+                }
             }
 
             // Show owner status and contact details
@@ -122,22 +124,10 @@ class MessageHandler {
             const aiResponse = await this.aiHandler.generateResponse(messageText, senderInfo);
             
             if (aiResponse) {
-                // Return AI response with stop button
-                return {
-                    type: 'button',
-                    content: this.buttonHandler.createButtonMessage(
-                        aiResponse,
-                        [this.buttonHandler.createStopAIButton()]
-                    )
-                };
+                // Return AI response with stop option
+                return aiResponse + '\n\n• ❌ Stop AI Chat\n\nType "stop ai chat" or "❌" to end AI conversation.';
             } else {
-                return {
-                    type: 'button',
-                    content: this.buttonHandler.createButtonMessage(
-                        "I'm having trouble understanding. Could you rephrase that?",
-                        [this.buttonHandler.createStopAIButton()]
-                    )
-                };
+                return "I'm having trouble understanding. Could you rephrase that?\n\n• ❌ Stop AI Chat\n\nType \"stop ai chat\" or \"❌\" to end AI conversation.";
             }
 
         } catch (error) {
@@ -159,20 +149,70 @@ class MessageHandler {
 
         let statusText;
         if (this.ownerStatus === 'offline') {
-            statusText = `Hello ${contactName}! 👋\n\n🔴 My owner is currently offline and will be back within a few minutes.\n\nPlease don't spam messages as they will be reviewed later.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Want to chat with AI assistant while waiting?*`;
+            statusText = `Hello ${contactName}!\n\n🔴 My owner is currently offline and will be back within a few minutes.\n\nPlease don't spam messages as they will be reviewed later.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Want to chat with AI assistant while waiting?*\n\n• 🤖 Start AI Chat\n\nType "start ai chat" or "🤖" to begin AI conversation.`;
         } else if (this.ownerStatus === 'busy') {
-            statusText = `Hello ${contactName}! 👋\n\n🟡 My owner is currently busy but will respond soon.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Want to chat with AI assistant while waiting?*`;
+            statusText = `Hello ${contactName}!\n\n🟡 My owner is currently busy but will respond soon.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Want to chat with AI assistant while waiting?*\n\n• 🤖 Start AI Chat\n\nType "start ai chat" or "🤖" to begin AI conversation.`;
         } else {
-            statusText = `Hello ${contactName}! 👋\n\n🟢 My owner should respond shortly.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Want to chat with AI assistant?*`;
+            statusText = `Hello ${contactName}!\n\n🟢 My owner should respond shortly.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Want to chat with AI assistant?*\n\n• 🤖 Start AI Chat\n\nType "start ai chat" or "🤖" to begin AI conversation.`;
         }
 
-        return {
-            type: 'button',
-            content: this.buttonHandler.createButtonMessage(
-                statusText,
-                [this.buttonHandler.createStartAIButton()]
-            )
-        };
+        return statusText;
+    }
+
+    getKnowledgeBasedResponse(messageText) {
+        const text = messageText.toLowerCase();
+        
+        // Geography questions
+        if (text.includes('capital') && text.includes('france')) {
+            return 'The capital of France is Paris.';
+        }
+        if (text.includes('capital') && text.includes('india')) {
+            return 'The capital of India is New Delhi.';
+        }
+        if (text.includes('capital') && text.includes('usa') || text.includes('capital') && text.includes('america')) {
+            return 'The capital of the USA is Washington, D.C.';
+        }
+        if (text.includes('capital') && text.includes('japan')) {
+            return 'The capital of Japan is Tokyo.';
+        }
+        
+        // Science questions
+        if (text.includes('momentum') && (text.includes('principle') || text.includes('law'))) {
+            return 'The principle of momentum states that momentum = mass × velocity. It is conserved in isolated systems, meaning the total momentum before and after a collision remains constant.';
+        }
+        if (text.includes('gravity') || text.includes('gravitational')) {
+            return 'Gravity is the force that attracts objects toward each other. On Earth, it gives objects weight and causes them to fall at 9.8 m/s².';
+        }
+        
+        // History questions
+        if (text.includes('who wrote') && text.includes('aadijeevitham')) {
+            return 'Aadijeevitham (The Goat Life) was written by Benyamin, a Malayalam author. It tells the true story of an Indian migrant worker in Saudi Arabia.';
+        }
+        if (text.includes('president') && text.includes('india')) {
+            return 'The current President of India is Droupadi Murmu (as of 2022). The President is the ceremonial head of state.';
+        }
+        
+        // Time and date
+        if (text.includes('time') || text.includes('date')) {
+            return `Current time: ${new Date().toLocaleString()}`;
+        }
+        
+        // Math questions
+        if (text.includes('what is') && (text.includes('+') || text.includes('plus'))) {
+            const numbers = text.match(/\d+/g);
+            if (numbers && numbers.length >= 2) {
+                const sum = parseInt(numbers[0]) + parseInt(numbers[1]);
+                return `${numbers[0]} + ${numbers[1]} = ${sum}`;
+            }
+        }
+        
+        // Greetings
+        if (text.includes('hello') || text.includes('hi') || text.includes('hey')) {
+            return `Hello! I'm an AI assistant. I can help you with general knowledge questions about geography, science, history, and basic calculations. What would you like to know?`;
+        }
+        
+        // Default helpful response
+        return `I can help you with questions about:\n• Geography (capitals, countries)\n• Science (physics, biology basics)\n• History and general knowledge\n• Simple calculations\n• Current time and date\n\nWhat would you like to know?`;
     }
 
     setOwnerStatus(status) {

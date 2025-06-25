@@ -174,21 +174,41 @@ class Bot extends EventEmitter {
 
     async sendResponse(originalMessage, response) {
         try {
-            // Add typing indicator simulation
-            await this.simulateTyping(originalMessage.from);
+            const chat = await originalMessage.getChat();
+            
+            // Simulate typing indicator
+            await this.simulateTyping(chat.id._serialized);
+            
+            // Add random delay to make responses feel more natural
+            const delay = { min: 1000, max: 3000 };
+            const randomDelay = Math.random() * (delay.max - delay.min) + delay.min;
+            await new Promise(resolve => setTimeout(resolve, randomDelay));
+            
+            // Handle different response types
+            let messageText;
+            if (typeof response === 'object' && response.type) {
+                if (response.type === 'button') {
+                    messageText = response.content.text;
+                } else if (response.type === 'text') {
+                    messageText = response.content;
+                } else {
+                    messageText = JSON.stringify(response);
+                }
+            } else {
+                messageText = response;
+            }
             
             // Send the response
-            await this.client.sendMessage(originalMessage.from, response);
+            await chat.sendMessage(messageText);
             
             this.emit('message_replied');
-            logger.info(`Sent response to ${originalMessage.from}: ${response}`);
+            logger.info(`Sent response to ${originalMessage.from}`);
 
             // Update rate limiter
             this.rateLimiter.recordMessage(originalMessage.from);
 
         } catch (error) {
             logger.error('Failed to send response:', error);
-            throw error;
         }
     }
 
