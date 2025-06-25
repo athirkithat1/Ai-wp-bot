@@ -1,3 +1,3 @@
-2025/06/25-11:20:04.261 fdb Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Local Storage/leveldb/MANIFEST-000001
-2025/06/25-11:20:04.271 fdb Recovering log #3
-2025/06/25-11:20:04.271 fdb Reusing old log /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Local Storage/leveldb/000003.log 
+2025/06/25-11:58:44.625 aa Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Local Storage/leveldb/MANIFEST-000001
+2025/06/25-11:58:44.763 aa Recovering log #3
+2025/06/25-11:58:45.248 aa Reusing old log /home/runner/workspace/.wwebjs_auth/session-whatsapp-userbot/Default/Local Storage/leveldb/000003.log 
