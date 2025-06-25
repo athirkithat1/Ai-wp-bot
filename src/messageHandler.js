@@ -115,30 +115,30 @@ class MessageHandler {
         const chatId = message.from;
 
         try {
-            // Generate AI response
+            // Generate AI response if available
             const senderInfo = {
                 name: contact.pushname || contact.name || 'Unknown',
                 number: contact.number || message.from
             };
 
-            const aiResponse = await this.aiHandler.generateResponse(messageText, senderInfo);
+            let aiResponse = null;
+            try {
+                aiResponse = await this.aiHandler.generateResponse(messageText, senderInfo);
+            } catch (error) {
+                logger.warn('AI response failed, using knowledge-based fallback');
+            }
             
             if (aiResponse) {
-                // Return AI response with stop option
                 return aiResponse + '\n\n• ❌ Stop AI Chat\n\nType "stop ai chat" or "❌" to end AI conversation.';
             } else {
-                return "I'm having trouble understanding. Could you rephrase that?\n\n• ❌ Stop AI Chat\n\nType \"stop ai chat\" or \"❌\" to end AI conversation.";
+                // Knowledge-based fallback responses
+                const fallbackResponse = this.getKnowledgeBasedResponse(messageText);
+                return fallbackResponse + '\n\n• ❌ Stop AI Chat\n\nType "stop ai chat" or "❌" to end AI conversation.';
             }
 
         } catch (error) {
             logger.error('Error in AI chat:', error);
-            return {
-                type: 'button',
-                content: this.buttonHandler.createButtonMessage(
-                    "Sorry, I'm experiencing technical difficulties. Please try again.",
-                    [this.buttonHandler.createStopAIButton()]
-                )
-            };
+            return "Sorry, I'm experiencing technical difficulties. Please try again.\n\n• ❌ Stop AI Chat\n\nType \"stop ai chat\" or \"❌\" to end AI conversation.";
         }
     }
 
@@ -169,11 +169,23 @@ class MessageHandler {
         if (text.includes('capital') && text.includes('india')) {
             return 'The capital of India is New Delhi.';
         }
-        if (text.includes('capital') && text.includes('usa') || text.includes('capital') && text.includes('america')) {
+        if (text.includes('capital') && (text.includes('usa') || text.includes('america'))) {
             return 'The capital of the USA is Washington, D.C.';
         }
         if (text.includes('capital') && text.includes('japan')) {
             return 'The capital of Japan is Tokyo.';
+        }
+        if (text.includes('capital') && text.includes('kerala')) {
+            return 'The capital of Kerala is Thiruvananthapuram (also known as Trivandrum).';
+        }
+        if (text.includes('capital') && text.includes('tamil nadu')) {
+            return 'The capital of Tamil Nadu is Chennai.';
+        }
+        if (text.includes('capital') && text.includes('karnataka')) {
+            return 'The capital of Karnataka is Bengaluru (Bangalore).';
+        }
+        if (text.includes('capital') && text.includes('maharashtra')) {
+            return 'The capital of Maharashtra is Mumbai.';
         }
         
         // Science questions
@@ -190,6 +202,9 @@ class MessageHandler {
         }
         if (text.includes('president') && text.includes('india')) {
             return 'The current President of India is Droupadi Murmu (as of 2022). The President is the ceremonial head of state.';
+        }
+        if (text.includes('prime minister') && text.includes('india')) {
+            return 'The current Prime Minister of India is Narendra Modi. He has been in office since 2014.';
         }
         
         // Time and date
@@ -211,8 +226,13 @@ class MessageHandler {
             return `Hello! I'm an AI assistant. I can help you with general knowledge questions about geography, science, history, and basic calculations. What would you like to know?`;
         }
         
+        // Check for basic patterns
+        if (text.includes('who is') || text.includes('what is') || text.includes('how') || text.includes('why') || text.includes('when') || text.includes('where')) {
+            return `I can help you with questions about:\n• Geography: capitals of countries and states\n• Science: physics, chemistry, biology basics\n• History: presidents, prime ministers, famous people\n• Math: basic calculations\n• General knowledge and current information\n\nCould you be more specific about what you'd like to know?`;
+        }
+        
         // Default helpful response
-        return `I can help you with questions about:\n• Geography (capitals, countries)\n• Science (physics, biology basics)\n• History and general knowledge\n• Simple calculations\n• Current time and date\n\nWhat would you like to know?`;
+        return `Hello! I'm here to help you with questions. You can ask me about:\n• Geography (capitals, countries, states)\n• Science (physics, biology basics)\n• History and general knowledge\n• Simple calculations\n• Current time and date\n\nWhat would you like to know?`;
     }
 
     setOwnerStatus(status) {
