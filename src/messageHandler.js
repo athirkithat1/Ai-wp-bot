@@ -14,6 +14,8 @@ class MessageHandler {
         this.buttonHandler = new ButtonHandler();
         this.ownerStatus = 'offline'; // offline, online, busy
         this.contactedUsers = new Set(); // Track users who have been contacted
+        this.approvedUsers = new Map(); // Track approved users with expiry
+        this.ownerNumber = process.env.OWNER_NUMBER || null; // Set owner's WhatsApp number
         this.loadConfiguration();
     }
 
@@ -78,19 +80,27 @@ class MessageHandler {
                 contact = { pushname: 'Unknown', name: 'Unknown', number: message.from };
             }
 
-            // Handle button commands and user commands
-            if (messageText.toLowerCase().includes('start ai chat') || messageText.toLowerCase().includes('🤖') || messageText.toLowerCase() === '/start' || messageText.toLowerCase() === '/ai') {
+            // Handle owner-only approve commands
+            if (this.isOwnerMessage(message)) {
+                const approveResponse = this.handleOwnerApproveCommand(messageText, message);
+                if (approveResponse) {
+                    return approveResponse;
+                }
+            }
+
+            // Handle AI chat commands
+            if (messageText.toLowerCase() === '/start' || messageText.toLowerCase() === '/ai') {
                 const buttonResponse = await this.buttonHandler.handleButtonClick('start_ai_chat', message);
                 return buttonResponse;
             }
             
-            if (messageText.toLowerCase().includes('stop ai chat') || messageText.toLowerCase().includes('❌') || messageText.toLowerCase() === '/stop') {
+            if (messageText.toLowerCase() === '/stop') {
                 const buttonResponse = await this.buttonHandler.handleButtonClick('stop_ai_chat', message);
                 return buttonResponse;
             }
 
             // Check if user wants help/commands
-            if (messageText.toLowerCase() === '/help' || messageText.toLowerCase() === 'help' || messageText.toLowerCase() === '/commands') {
+            if (messageText.toLowerCase() === '/help' || messageText.toLowerCase() === 'help') {
                 return this.getHelpMessage();
             }
 
@@ -99,14 +109,14 @@ class MessageHandler {
                 return await this.handleAIChatMessage(message, contact);
             }
 
-            // Only show welcome message on first contact or specific triggers
-            if (this.isFirstMessage(chatId) || messageText.toLowerCase().includes('hello') || messageText.toLowerCase().includes('hi') || messageText.toLowerCase().includes('hey')) {
-                this.markUserContacted(chatId);
-                return this.createOwnerStatusMessage(contact, message);
+            // Check if user is approved
+            if (this.isUserApproved(chatId)) {
+                // User is approved, let them chat freely
+                return this.getApprovedUserResponse();
             }
 
-            // For other messages, show brief response with commands
-            return this.getBriefResponse();
+            // User not approved - show welcome message with commands
+            return this.createWelcomeMessageWithCommands(contact, message);
 
         } catch (error) {
             logger.error('Error processing message:', error);
@@ -133,25 +143,11 @@ class MessageHandler {
             }
             
             if (aiResponse) {
-                return {
-                    type: 'button',
-                    content: {
-                        text: aiResponse,
-                        buttons: [this.buttonHandler.createStopAIButton()],
-                        headerType: 1
-                    }
-                };
+                return aiResponse + '\n\n• Type /stop to end AI chat';
             } else {
                 // Knowledge-based fallback responses
                 const fallbackResponse = this.getKnowledgeBasedResponse(messageText);
-                return {
-                    type: 'button',
-                    content: {
-                        text: fallbackResponse,
-                        buttons: [this.buttonHandler.createStopAIButton()],
-                        headerType: 1
-                    }
-                };
+                return fallbackResponse + '\n\n• Type /stop to end AI chat';
             }
 
         } catch (error) {
@@ -160,51 +156,173 @@ class MessageHandler {
         }
     }
 
-    createOwnerStatusMessage(contact, message) {
+    createWelcomeMessageWithCommands(contact, message) {
         const contactName = contact.pushname || contact.name || 'Unknown';
         const contactNumber = contact.number || message.from.replace('@c.us', '');
         const messageTime = new Date().toLocaleString();
 
         let statusText;
         if (this.ownerStatus === 'offline') {
-            statusText = `Hello ${contactName}!\n\n🔴 My owner is currently offline and will be back within a few minutes.\n\nPlease don't spam messages as they will be reviewed later.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}`;
+            statusText = `Hello ${contactName}!\n\n🔴 My owner is currently offline and will be back within a few minutes.\n\nPlease don't spam messages as they will be reviewed later.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Available Commands:*\n• /start or /ai - Start AI chat\n• /help - Show commands\n\nType /start to begin AI conversation!`;
         } else if (this.ownerStatus === 'busy') {
-            statusText = `Hello ${contactName}!\n\n🟡 My owner is currently busy but will respond soon.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}`;
+            statusText = `Hello ${contactName}!\n\n🟡 My owner is currently busy but will respond soon.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Available Commands:*\n• /start or /ai - Start AI chat\n• /help - Show commands\n\nType /start to begin AI conversation!`;
         } else {
-            statusText = `Hello ${contactName}!\n\n🟢 My owner should respond shortly.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}`;
+            statusText = `Hello ${contactName}!\n\n🟢 My owner should respond shortly.\n\n📋 *Your Contact Details:*\n• Your Number: ${contactNumber}\n• Your Name: ${contactName}\n• Message Time: ${messageTime}\n\n*Available Commands:*\n• /start or /ai - Start AI chat\n• /help - Show commands\n\nType /start to begin AI conversation!`;
         }
 
-        return {
-            type: 'button',
-            content: {
-                text: statusText,
-                buttons: [this.buttonHandler.createStartAIButton()],
-                headerType: 1
-            }
-        };
-    }
-
-    getBriefResponse() {
-        return {
-            type: 'button',
-            content: {
-                text: `Use these commands:\n/start - Begin AI chat\n/help - Show all commands`,
-                buttons: [this.buttonHandler.createStartAIButton()],
-                headerType: 1
-            }
-        };
+        return statusText;
     }
 
     getHelpMessage() {
-        return `*Available Commands:*\n\n/start or /ai - Start AI chat\n/stop - Stop AI chat\n/help - Show this help\n\nOr use the buttons below for quick access.`;
+        return `*Available Commands:*\n\n• /start or /ai - Start AI chat\n• /stop - Stop AI chat\n• /help - Show this help\n\nUse these commands to interact with the bot!`;
     }
 
-    isFirstMessage(chatId) {
-        return !this.contactedUsers.has(chatId);
+    getApprovedUserResponse() {
+        return `You are approved to chat directly! Your messages will be forwarded to the owner.\n\nYou can also use /start for AI chat anytime.`;
     }
 
-    markUserContacted(chatId) {
-        this.contactedUsers.add(chatId);
+    isOwnerMessage(message) {
+        if (!this.ownerNumber) return false;
+        const senderNumber = message.from.replace('@c.us', '');
+        return senderNumber === this.ownerNumber;
+    }
+
+    handleOwnerApproveCommand(messageText, message) {
+        const text = messageText.toLowerCase().trim();
+        
+        if (!text.startsWith('/approve')) {
+            return null;
+        }
+
+        // Parse approve command: /approve <duration> [user_number]
+        const parts = text.split(' ');
+        if (parts.length < 2) {
+            return 'Usage: /approve <duration> [user_number]\nExamples:\n• /approve 1day\n• /approve 5message\n• /approve forever\n• /approve stop\n• /approve 1hour +1234567890';
+        }
+
+        const duration = parts[1];
+        let targetUser = null;
+
+        // If user number is provided, use it; otherwise use the quoted message sender
+        if (parts.length > 2 && parts[2].startsWith('+')) {
+            targetUser = parts[2].replace('+', '') + '@c.us';
+        } else if (message.hasQuotedMsg) {
+            // Get the quoted message sender
+            message.getQuotedMessage().then(quotedMsg => {
+                if (quotedMsg) {
+                    targetUser = quotedMsg.from;
+                    this.processApproval(duration, targetUser);
+                }
+            });
+            return 'Processing approval for quoted message sender...';
+        }
+
+        if (!targetUser) {
+            return 'Please reply to a user message or specify phone number.\nExample: /approve 1day +1234567890';
+        }
+
+        return this.processApproval(duration, targetUser);
+    }
+
+    processApproval(duration, userId) {
+        if (duration === 'stop') {
+            this.approvedUsers.delete(userId);
+            return `✅ Approval removed for user.`;
+        }
+
+        if (duration === 'forever') {
+            this.approvedUsers.set(userId, {
+                type: 'forever',
+                expiresAt: null
+            });
+            return `✅ User approved forever.`;
+        }
+
+        // Parse duration
+        const durationInfo = this.parseDuration(duration);
+        if (!durationInfo) {
+            return '❌ Invalid duration format.\nExamples: 1day, 5message, 2hour, 1week, 30minute';
+        }
+
+        this.approvedUsers.set(userId, durationInfo);
+        return `✅ User approved for ${duration}.`;
+    }
+
+    parseDuration(duration) {
+        const match = duration.match(/^(\d+)(minute|hour|day|week|month|year|message)s?$/);
+        if (!match) return null;
+
+        const amount = parseInt(match[1]);
+        const unit = match[2];
+
+        if (unit === 'message') {
+            return {
+                type: 'message',
+                remaining: amount,
+                expiresAt: null
+            };
+        }
+
+        const now = Date.now();
+        let expiresAt;
+
+        switch (unit) {
+            case 'minute':
+                expiresAt = now + (amount * 60 * 1000);
+                break;
+            case 'hour':
+                expiresAt = now + (amount * 60 * 60 * 1000);
+                break;
+            case 'day':
+                expiresAt = now + (amount * 24 * 60 * 60 * 1000);
+                break;
+            case 'week':
+                expiresAt = now + (amount * 7 * 24 * 60 * 60 * 1000);
+                break;
+            case 'month':
+                expiresAt = now + (amount * 30 * 24 * 60 * 60 * 1000);
+                break;
+            case 'year':
+                expiresAt = now + (amount * 365 * 24 * 60 * 60 * 1000);
+                break;
+            default:
+                return null;
+        }
+
+        return {
+            type: 'time',
+            expiresAt: expiresAt
+        };
+    }
+
+    isUserApproved(userId) {
+        const approval = this.approvedUsers.get(userId);
+        if (!approval) return false;
+
+        if (approval.type === 'forever') {
+            return true;
+        }
+
+        if (approval.type === 'time') {
+            if (Date.now() > approval.expiresAt) {
+                this.approvedUsers.delete(userId);
+                return false;
+            }
+            return true;
+        }
+
+        if (approval.type === 'message') {
+            if (approval.remaining <= 0) {
+                this.approvedUsers.delete(userId);
+                return false;
+            }
+            // Decrease remaining messages
+            approval.remaining--;
+            this.approvedUsers.set(userId, approval);
+            return true;
+        }
+
+        return false;
     }
 
     getKnowledgeBasedResponse(messageText) {

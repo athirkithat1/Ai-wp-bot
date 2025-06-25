@@ -194,30 +194,8 @@ class Bot extends EventEmitter {
             const randomDelay = Math.random() * (delay.max - delay.min) + delay.min;
             await new Promise(resolve => setTimeout(resolve, randomDelay));
             
-            // Handle different response types
-            if (typeof response === 'object' && response.type) {
-                if (response.type === 'button') {
-                    // Try to send interactive buttons, fallback to text if not supported
-                    try {
-                        await chat.sendMessage(response.content.text, {
-                            buttons: response.content.buttons.map(btn => ({
-                                body: btn.buttonText.displayText,
-                                id: btn.buttonId
-                            }))
-                        });
-                    } catch (error) {
-                        // Fallback to text with button options
-                        const buttonText = response.content.text + '\n\n' + 
-                            response.content.buttons.map(btn => `• ${btn.buttonText.displayText}`).join('\n');
-                        await chat.sendMessage(buttonText);
-                    }
-                } else if (response.type === 'text') {
-                    await chat.sendMessage(response.content);
-                }
-            } else {
-                // Send regular text message
-                await chat.sendMessage(response);
-            }
+            // Send regular text message
+            await chat.sendMessage(response);
             
             this.emit('message_replied');
             logger.info(`Sent response to ${originalMessage.from}`);
