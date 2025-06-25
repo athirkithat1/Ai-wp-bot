@@ -90,7 +90,7 @@ class Dashboard {
 
     async refreshStats() {
         try {
-            const response = await fetch('/api/status');
+            const response = await fetch('/api/stats');
             const data = await response.json();
 
             // Update status indicators

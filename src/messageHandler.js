@@ -361,8 +361,20 @@ class MessageHandler {
         if (text.includes('gravity') || text.includes('gravitational')) {
             return 'Gravity is the force that attracts objects toward each other. On Earth, it gives objects weight and causes them to fall at 9.8 m/s².';
         }
+        if (text.includes('what is force')) {
+            return 'Force is a push or pull that can change an object\'s motion. It is measured in Newtons (N). According to Newton\'s second law: Force = mass × acceleration (F = ma).';
+        }
+        if (text.includes('what is anatomy')) {
+            return 'Anatomy is the branch of biology that studies the structure of living organisms and their parts. It includes the study of organs, tissues, cells, and body systems in humans, animals, and plants.';
+        }
+        if (text.includes('what is physics')) {
+            return 'Physics is the science that studies matter, energy, motion, and the fundamental forces of nature. It includes mechanics, thermodynamics, electromagnetism, and quantum physics.';
+        }
+        if (text.includes('what is chemistry')) {
+            return 'Chemistry is the science that studies the composition, structure, properties, and reactions of matter at the atomic and molecular level.';
+        }
         
-        // History questions
+        // History and Government questions
         if (text.includes('who wrote') && text.includes('aadijeevitham')) {
             return 'Aadijeevitham (The Goat Life) was written by Benyamin, a Malayalam author. It tells the true story of an Indian migrant worker in Saudi Arabia.';
         }
@@ -371,6 +383,12 @@ class MessageHandler {
         }
         if (text.includes('prime minister') && text.includes('india')) {
             return 'The current Prime Minister of India is Narendra Modi. He has been in office since 2014.';
+        }
+        if ((text.includes('finance minister') || text.includes('financial minister')) && text.includes('india')) {
+            return 'The current Finance Minister of India is Nirmala Sitharaman. She has been serving since 2019 and is the second woman to hold this position.';
+        }
+        if (text.includes('current status') && text.includes('india')) {
+            return 'India is currently the world\'s most populous country and 5th largest economy. It continues to grow as a major global power with significant technological and economic development.';
         }
         
         // Time and date
@@ -392,9 +410,20 @@ class MessageHandler {
             return `Hello! I'm an AI assistant. I can help you with general knowledge questions about geography, science, history, and basic calculations. What would you like to know?`;
         }
         
+        // More specific knowledge areas
+        if (text.includes('photosynthesis')) {
+            return 'Photosynthesis is the process by which plants convert sunlight, carbon dioxide, and water into glucose and oxygen. The formula is: 6CO2 + 6H2O + light energy → C6H12O6 + 6O2.';
+        }
+        if (text.includes('cell') && (text.includes('what is') || text.includes('definition'))) {
+            return 'A cell is the basic structural and functional unit of all living organisms. Cells can be prokaryotic (without nucleus) or eukaryotic (with nucleus).';
+        }
+        if (text.includes('dna')) {
+            return 'DNA (Deoxyribonucleic Acid) is the molecule that carries genetic information in all living organisms. It has a double helix structure made of four bases: A, T, G, and C.';
+        }
+
         // Check for basic patterns
         if (text.includes('who is') || text.includes('what is') || text.includes('how') || text.includes('why') || text.includes('when') || text.includes('where')) {
-            return `I can help you with questions about:\n• Geography: capitals of countries and states\n• Science: physics, chemistry, biology basics\n• History: presidents, prime ministers, famous people\n• Math: basic calculations\n• General knowledge and current information\n\nCould you be more specific about what you'd like to know?`;
+            return `I can help you with questions about:\n• Geography: capitals of countries and states\n• Science: physics, chemistry, biology, anatomy\n• History: presidents, ministers, government officials\n• Math: basic calculations and formulas\n• General knowledge and current information\n\nCould you be more specific about what you'd like to know?`;
         }
         
         // Default helpful response
