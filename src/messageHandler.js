@@ -2,12 +2,14 @@ const fs = require('fs').promises;
 const path = require('path');
 const logger = require('./logger');
 const NLP = require('./nlp');
+const AIHandler = require('./aiHandler');
 
 class MessageHandler {
     constructor() {
         this.responses = null;
         this.settings = null;
         this.nlp = new NLP();
+        this.aiHandler = new AIHandler();
         this.loadConfiguration();
     }
 

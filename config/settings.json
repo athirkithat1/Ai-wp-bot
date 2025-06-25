@@ -4,6 +4,7 @@
         "version": "1.0.0",
         "enableNLP": true,
         "respondToGroups": false,
+        "enableAI": true,
         "enableTypingIndicator": true,
         "maxResponseLength": 500
     },
